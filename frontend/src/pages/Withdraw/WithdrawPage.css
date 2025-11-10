@@ -1,0 +1,38 @@
+.withdraw-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .withdraw-header h1 {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .withdraw-content {
+    padding: 20px;
+  }
+  
+  .withdraw-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .withdraw-button {
+    width: 100%;
+    padding: 15px;
+    background: #6C63FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
