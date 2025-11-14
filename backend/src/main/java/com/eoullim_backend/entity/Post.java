@@ -30,9 +30,11 @@ public class Post {
     private String content;
     
     @Column(nullable = false)
+    @Builder.Default
     private Integer viewCount = 0;
     
     @Column(nullable = false)
+    @Builder.Default
     private Integer likeCount = 0;
     
     @Column(nullable = false, updatable = false)
