@@ -8,6 +8,7 @@
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "axios": "^1.13.2",
     "cra-template": "1.2.0",
     "firebase": "^11.0.2",
     "react": "^19.0.0",

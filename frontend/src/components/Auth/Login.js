@@ -1,58 +1,117 @@
-// src/components/Login.js
-
 import React, { useState } from 'react';
-import { auth } from '../../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { userAPI } from '../../services/api';
+import './Auth.css';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function Login({ onLoginSuccess }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // 로딩 상태 추가
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (error) setError('');
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // 로그인 요청 시작
-    setError(''); // 이전 오류 메시지 초기화
-    
+    setIsLoading(true);
+    setError('');
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('로그인 성공!');
-      navigate('/'); // 로그인 후 메인 페이지로 리다이렉트
+      const response = await userAPI.login(formData.email, formData.password);
+      
+      // 로그인 성공 - 사용자 정보 저장
+      const userData = response.data;
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      
+      // 부모 컴포넌트에 성공 알림
+      if (onLoginSuccess) {
+        onLoginSuccess(userData);
+      }
+      
+      console.log('로그인 성공:', userData);
     } catch (err) {
-      setError(err.message); // 오류 메시지를 상태에 저장
+      console.error('로그인 에러:', err);
+      
+      // 에러 메시지 처리
+      let errorMessage = '로그인에 실패했습니다.';
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.response?.status === 401) {
+        errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
+      } else if (err.response?.status >= 500) {
+        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      }
+      
+      setError(errorMessage);
     } finally {
-      setLoading(false); // 로그인 요청 완료
+      setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>로그인</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* 오류 메시지 표시 */}
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="이메일"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={loading}> {/* 로딩 중 버튼 비활성화 */}
-          {loading ? '로딩...' : '로그인'}
-        </button>
-      </form>
+    <div className="auth-container">
+      <div className="auth-form">
+        <h2>로그인</h2>
+        
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label htmlFor="email">이메일</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="이메일을 입력하세요"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">비밀번호</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="비밀번호를 입력하세요"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={isLoading || !formData.email || !formData.password}
+          >
+            {isLoading ? '로그인 중...' : '로그인'}
+          </button>
+        </form>
+
+        <div className="auth-links">
+          <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default Login;
