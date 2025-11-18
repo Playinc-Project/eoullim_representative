@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { userAPI } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 
-function Signup({ onSignupSuccess }) {
+function Signup() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     username: ''
   });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { signup, loading, error } = useAuth();
+  const navigate = useNavigate();
+  const [localError, setLocalError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,16 +21,16 @@ function Signup({ onSignupSuccess }) {
       [name]: value
     }));
     // Clear error when user starts typing
-    if (error) setError('');
+    if (localError) setLocalError('');
   };
 
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.');
+      setLocalError('비밀번호가 일치하지 않습니다.');
       return false;
     }
     if (formData.password.length < 6) {
-      setError('비밀번호는 6자 이상이어야 합니다.');
+      setLocalError('비밀번호는 6자 이상이어야 합니다.');
       return false;
     }
     return true;
@@ -39,9 +41,6 @@ function Signup({ onSignupSuccess }) {
     
     if (!validateForm()) return;
     
-    setIsLoading(true);
-    setError('');
-
     try {
       const userData = {
         email: formData.email,
@@ -49,36 +48,17 @@ function Signup({ onSignupSuccess }) {
         username: formData.username
       };
       
-      const response = await userAPI.signup(userData);
+      await signup(userData);
       
-      // 회원가입 성공
-      const newUser = response.data;
-      console.log('회원가입 성공:', newUser);
-      
-      // 자동 로그인 처리 (옵션)
-      if (onSignupSuccess) {
-        onSignupSuccess(newUser);
-      }
-      
+      // 회원가입 성공 시 메인 페이지로 이동
+      navigate('/main');
       alert('회원가입이 완료되었습니다!');
     } catch (err) {
-      console.error('회원가입 에러:', err);
-      
-      // 에러 메시지 처리
-      let errorMessage = '회원가입에 실패했습니다.';
-      if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.response?.status === 409) {
-        errorMessage = '이미 존재하는 이메일입니다.';
-      } else if (err.response?.status >= 500) {
-        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+      console.error('회원가입 실패:', err.message);
     }
   };
+
+  const displayError = localError || error;
 
   return (
     <div className="auth-container">
@@ -96,7 +76,7 @@ function Signup({ onSignupSuccess }) {
               value={formData.username}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
@@ -110,7 +90,7 @@ function Signup({ onSignupSuccess }) {
               value={formData.email}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
@@ -124,7 +104,7 @@ function Signup({ onSignupSuccess }) {
               value={formData.password}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
@@ -138,22 +118,22 @@ function Signup({ onSignupSuccess }) {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
-          {error && (
+          {displayError && (
             <div className="error-message">
-              {error}
+              {displayError}
             </div>
           )}
 
           <button 
             type="submit" 
             className="auth-button"
-            disabled={isLoading || !formData.email || !formData.password || !formData.username}
+            disabled={loading || !formData.email || !formData.password || !formData.username}
           >
-            {isLoading ? '가입 중...' : '회원가입'}
+            {loading ? '가입 중...' : '회원가입'}
           </button>
         </form>
 

@@ -2,6 +2,7 @@ package com.eoullim_backend.controller;
 
 import com.eoullim_backend.dto.UserDTO;
 import com.eoullim_backend.dto.UserRequestDTO;
+import com.eoullim_backend.dto.LoginRequestDTO;
 import com.eoullim_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +29,31 @@ public class UserController {
     
     // 로그인: POST /api/users/login
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(
-            @RequestParam String email,
-            @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
         try {
-            UserDTO user = userService.login(email, password);
+            UserDTO user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            // 에러 메시지를 JSON으로 반환
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+    
+    // 에러 응답용 클래스
+    public static class ErrorResponse {
+        private String error;
+        
+        public ErrorResponse(String error) {
+            this.error = error;
+        }
+        
+        public String getError() {
+            return error;
+        }
+        
+        public void setError(String error) {
+            this.error = error;
         }
     }
     

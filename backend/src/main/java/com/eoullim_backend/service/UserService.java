@@ -34,15 +34,22 @@ public class UserService {
     
     // 로그인
     public UserDTO login(String email, String password) {
+        System.out.println("🔍 로그인 시도 - Email: " + email + ", Password: " + password);
+        
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
+            System.out.println("❌ 사용자를 찾을 수 없음: " + email);
             throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
         
+        System.out.println("✅ 사용자 찾음 - DB Password: " + user.get().getPassword());
+        
         if (!user.get().getPassword().equals(password)) { // 실제로는 암호화 비교 필요
+            System.out.println("❌ 비밀번호 불일치 - 입력: " + password + ", DB: " + user.get().getPassword());
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
         
+        System.out.println("🎉 로그인 성공!");
         return convertToDTO(user.get());
     }
     

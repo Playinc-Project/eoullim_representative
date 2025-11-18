@@ -1,19 +1,17 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoWarning, IoChevronForward } from 'react-icons/io5';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { useAuth } from '../../contexts/AuthContext';
 import './ProfilePage.css';
 
-const ProfilePage = ({ user }) => {
+const ProfilePage = () => {
  const navigate = useNavigate();
+ const { user, logout } = useAuth();
 
- const handleLogout = async () => {
-   try {
-     await signOut(auth);
-     navigate('/login');
-   } catch (error) {
-     console.error('로그아웃 중 에러 발생:', error);
+ const handleLogout = () => {
+   if (window.confirm('로그아웃하시겠습니까?')) {
+     logout();
+     navigate('/');
    }
  };
 
@@ -38,8 +36,9 @@ const ProfilePage = ({ user }) => {
          className="profile-image"
        />
        <div className="user-info">
-         <div className="user-name">신스님</div>
-         <div className="user-details">이화여자대학교 22학번</div>
+         <div className="user-name">{user?.username || '사용자'}</div>
+         <div className="user-details">{user?.email || ''}</div>
+         {user?.bio && <div className="user-bio">{user.bio}</div>}
        </div>
      </div>
 

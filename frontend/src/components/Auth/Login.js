@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { userAPI } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 
-function Login({ onLoginSuccess }) {
+function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, loading, error } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,44 +17,18 @@ function Login({ onLoginSuccess }) {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (error) setError('');
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
 
     try {
-      const response = await userAPI.login(formData.email, formData.password);
-      
-      // 로그인 성공 - 사용자 정보 저장
-      const userData = response.data;
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      
-      // 부모 컴포넌트에 성공 알림
-      if (onLoginSuccess) {
-        onLoginSuccess(userData);
-      }
-      
-      console.log('로그인 성공:', userData);
+      await login(formData.email, formData.password);
+      // 로그인 성공 시 메인 페이지로 이동
+      navigate('/main');
     } catch (err) {
-      console.error('로그인 에러:', err);
-      
-      // 에러 메시지 처리
-      let errorMessage = '로그인에 실패했습니다.';
-      if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.response?.status === 401) {
-        errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
-      } else if (err.response?.status >= 500) {
-        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+      // 에러는 AuthContext에서 처리됨
+      console.error('로그인 실패:', err.message);
     }
   };
 
@@ -73,7 +48,7 @@ function Login({ onLoginSuccess }) {
               value={formData.email}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
@@ -87,7 +62,7 @@ function Login({ onLoginSuccess }) {
               value={formData.password}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={loading}
             />
           </div>
 
@@ -100,9 +75,9 @@ function Login({ onLoginSuccess }) {
           <button 
             type="submit" 
             className="auth-button"
-            disabled={isLoading || !formData.email || !formData.password}
+            disabled={loading || !formData.email || !formData.password}
           >
-            {isLoading ? '로그인 중...' : '로그인'}
+            {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
 
