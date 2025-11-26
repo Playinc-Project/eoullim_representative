@@ -1,31 +1,33 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Splash.css';
-import splashIcon from '../../assets/images/splash-icon.png';
 
-const Splash = () => {
+function Splash() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 2초 후에 메인 페이지로 자동 이동
+    // 3초 후 로그인 페이지로 이동
     const timer = setTimeout(() => {
-      navigate('/main');
-    }, 2000);
+      navigate('/login');
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
     <div className="splash-container">
-      <div className="splash-content">
-        <img 
-          src={splashIcon} 
-          alt="환영합니다" 
-          className="splash-icon"
-        />
+      {/* 메인 로고 */}
+      <div className="splash-logo-wrapper">
+        <div className="splash-logo">
+          <span className="logo-text">어울림</span>
+        </div>
+        <div className="heart-icon">♥</div>
       </div>
+      
+      {/* 로딩 텍스트 */}
+      <p className="splash-loading">함께 나누어요...</p>
     </div>
   );
-};
+}
 
 export default Splash;

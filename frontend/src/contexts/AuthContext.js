@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authHelper } from '../firebase';
-import { userAPI } from '../services/api';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       setError('');
       setLoading(true);
       
-      const response = await userAPI.login(email, password);
+      const response = await authAPI.login(email, password);
       const userData = response.data;
       
       // 사용자 정보 저장
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
       setError('');
       setLoading(true);
       
-      const response = await userAPI.signup(userData);
+      const response = await authAPI.signup(userData);
       const newUser = response.data;
       
       // 회원가입 후 자동 로그인

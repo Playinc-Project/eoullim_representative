@@ -1,137 +1,136 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { postAPI } from '../../services/api';
-import PostList from '../../components/Board/PostList';
 import './Main.css';
 
-const Main = () => {
-  const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
-  const [hotPosts, setHotPosts] = useState([]);
+function Main() {
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
+  // 게시글 목록 불러오기
   useEffect(() => {
-    fetchHotPosts();
+    loadPosts();
   }, []);
 
-  const fetchHotPosts = async () => {
+  const loadPosts = async () => {
     try {
       setLoading(true);
       const response = await postAPI.getAll();
-      // 최신 5개 게시글만 표시
-      const posts = response.data.slice(0, 5);
-      setHotPosts(posts);
-    } catch (error) {
-      console.error('인기 게시글 조회 오류:', error);
+      
+      // 최신 글부터 표시
+      const sortedPosts = response.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      
+      setPosts(sortedPosts);
+      setError('');
+    } catch (err) {
+      console.error('Failed to load posts:', err);
+      setError('게시글을 불러올 수 없습니다');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm('로그아웃하시겠습니까?')) {
-      logout();
-      navigate('/');
-    }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return '방금';
+    if (diffMins < 60) return `${diffMins}분 전`;
+    if (diffHours < 24) return `${diffHours}시간 전`;
+    if (diffDays < 7) return `${diffDays}일 전`;
+    
+    return date.toLocaleDateString();
   };
 
-  const handlePostClick = (post) => {
-    navigate(`/post/${post.id}`, { state: { from: 'main' } });
-  };
-
-  if (!isAuthenticated) {
+  if (!currentUser.id) {
     return (
       <div className="main-container">
-        <div className="auth-required">
-          <h2>로그인이 필요합니다</h2>
-          <p>어울림의 모든 기능을 사용하려면 로그인해주세요.</p>
-          <div className="auth-buttons">
-            <Link to="/login" className="btn btn-primary">로그인</Link>
-            <Link to="/signup" className="btn btn-secondary">회원가입</Link>
-          </div>
-        </div>
+        <p>로그인이 필요합니다</p>
       </div>
     );
   }
 
   return (
     <div className="main-container">
+      {/* 헤더 */}
       <header className="main-header">
-        <div className="header-left">
-          <h1 className="main-title">어울림</h1>
-          <Link to="/messages" className="message-link">쪽지함</Link>
-        </div>
-        <div className="header-right">
-          <span className="user-welcome">안녕하세요, {user?.username}님!</span>
-          <Link to="/profile" className="profile-link">
-            <button className="icon-button">👤</button>
-          </Link>
-          <button onClick={handleLogout} className="logout-button">
-            로그아웃
-          </button>
+        <div className="header-logo">어울림</div>
+        <div className="header-nav">
+          <Link to="/main" className="nav-link active">공지</Link>
+          <Link to="/messages" className="nav-link">쪽지</Link>
+          <Link to="/profile" className="nav-link">프로필</Link>
         </div>
       </header>
 
-      <div className="section-header">
-        <h2 className="section-title">최신 게시글</h2>
-        <Link to="/board" className="view-more">더보기 ›</Link>
-      </div>
+      {/* 메인 콘텐츠 */}
+      <div className="main-content">
+        {/* 타이틀 */}
+        <h1 className="content-title">공지사항</h1>
 
-      <section className="hot-posts">
+        {/* 에러 메시지 */}
+        {error && <div className="error-message">{error}</div>}
+
+        {/* 로딩 상태 */}
         {loading ? (
-          <div className="posts-loading">게시글을 불러오는 중...</div>
+          <div className="loading">로딩 중...</div>
+        ) : posts.length === 0 ? (
+          <div className="empty-state">
+            <p>게시글이 없습니다</p>
+            <p>첫 번째 게시글을 작성해보세요!</p>
+          </div>
         ) : (
           <div className="posts-list">
-            {hotPosts.length > 0 ? (
-              hotPosts.map(post => (
-                <div 
-                  key={post.id} 
-                  className="post-card" 
-                  onClick={() => handlePostClick(post)}
-                >
-                  <div className="post-header">
-                    <span className="post-category">자유게시판</span>
-                  </div>
-                  <div className="post-main">
-                    <h3 className="post-title">{post.title}</h3>
-                    <p className="post-content">{post.content}</p>
-                  </div>
-                  <div className="post-footer">
-                    <div className="footer-left">
-                      <span className="post-author">{post.author?.username || '익명'}</span>
-                      <span className="post-date">
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="post-stats">
-                      <span className="views">👁 {post.views || 0}</span>
-                      <span className="comments">💬 {post.commentCount || 0}</span>
-                    </div>
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                to={`/post/${post.id}`}
+                className="post-card"
+              >
+                <div className="post-header">
+                  <h3 className="post-title">{post.title}</h3>
+                  <span className="post-views">조회 {post.viewCount}</span>
+                </div>
+
+                <p className="post-content">
+                  {post.content.substring(0, 100)}
+                  {post.content.length > 100 ? '...' : ''}
+                </p>
+
+                <div className="post-footer">
+                  <span className="post-author">{post.userId}</span>
+                  <span className="post-time">
+                    {formatDate(post.createdAt)}
+                  </span>
+                  <div className="post-stats">
+                    <span>♥ {post.likeCount}</span>
+                    <span>💬 댓글</span>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="no-posts">
-                <p>아직 게시글이 없습니다.</p>
-                <Link to="/board/write" className="btn btn-primary">
-                  첫 게시글 작성하기
-                </Link>
-              </div>
-            )}
+              </Link>
+            ))}
           </div>
         )}
-      </section>
+      </div>
 
-      {isAuthenticated && (
-        <div className="floating-actions">
-          <Link to="/board/write" className="add-button-link">
-            <button className="add-button">+</button>
-          </Link>
-        </div>
-      )}
+      {/* 글쓰기 버튼 */}
+      <button
+        className="fab-button"
+        onClick={() => navigate('/board/write')}
+        title="새 글 작성"
+      >
+        +
+      </button>
     </div>
   );
-};
+}
 
 export default Main;
