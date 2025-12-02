@@ -5,6 +5,7 @@ import com.eoullim_backend.dto.UserRequestDTO;
 import com.eoullim_backend.entity.User;
 import com.eoullim_backend.entity.Post;
 import com.eoullim_backend.repository.PostRepository;
+import com.eoullim_backend.repository.MessageRepository;
 import com.eoullim_backend.repository.CommentRepository;
 import org.springframework.transaction.annotation.Transactional;
 import com.eoullim_backend.repository.UserRepository;
@@ -19,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final MessageRepository messageRepository;
     
     // 회원가입
     public UserDTO signup(UserRequestDTO requestDTO) {
@@ -92,6 +94,8 @@ public class UserService {
     // 사용자 삭제
     @Transactional
     public void deleteUser(Long id) {
+        // 사용자가 주고받은 쪽지 선삭제
+        messageRepository.deleteBySenderIdOrRecipientId(id, id);
         // 사용자가 작성한 댓글 선삭제
         commentRepository.findByUserId(id).forEach(c -> commentRepository.deleteById(c.getId()));
 

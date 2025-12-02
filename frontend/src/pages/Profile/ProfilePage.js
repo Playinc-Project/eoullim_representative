@@ -7,7 +7,30 @@ import './ProfilePage.css';
 
 const ProfilePage = () => {
  const navigate = useNavigate();
- const { user, logout } = useAuth();
+ const { user, logout, updateUser } = useAuth();
+ const [hydrating, setHydrating] = React.useState(false);
+
+ // 최초 진입 시 사용자 표시가 비어있다면 서버 프로필로 보강
+ React.useEffect(() => {
+   const hydrate = async () => {
+     if (!user?.id) return;
+     const missing = !user?.username || !user?.email;
+     if (!missing) return;
+     try {
+       setHydrating(true);
+       const res = await authAPI.getProfile(user.id);
+       if (res?.data) {
+         updateUser(res.data);
+       }
+     } catch (_) {
+       // 표시 보강 실패는 무시하고 기존 값 유지
+     } finally {
+       setHydrating(false);
+     }
+   };
+   hydrate();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [user?.id]);
 
  const handleLogout = () => {
    if (window.confirm('로그아웃하시겠습니까?')) {
@@ -61,8 +84,8 @@ const ProfilePage = () => {
              <div className="avatar-circle">👤</div>
            </div>
            <div className="user-info">
-             <div className="user-name">{user?.username || '사용자'}</div>
-             <div className="user-email">{user?.email || ''}</div>
+             <div className="user-name">{hydrating ? '' : (user?.username || '사용자')}</div>
+             <div className="user-email">{hydrating ? '' : (user?.email || '')}</div>
              {user?.bio && <div className="user-bio">{user.bio}</div>}
            </div>
          </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { messageAPI } from '../../services/api';
+import { messageAPI, authAPI } from '../../services/api';
 import './MessageWrite.css';
 
 const MessageWrite = () => {
@@ -28,14 +28,23 @@ const MessageWrite = () => {
         setError('');
         
         try {
-            // 실제 메시지 API 호출 (recipientId는 임시로 2 사용)
-            await messageAPI.send(currentUser.id, 2, content);
+            // 이메일로 수신자 조회 → id로 전송
+            const prof = await authAPI.getByEmail(recipientEmail.trim());
+            const recipient = prof?.data;
+            if (!recipient?.id) {
+                setError('해당 이메일의 사용자를 찾을 수 없습니다');
+                setLoading(false);
+                return;
+            }
+
+            await messageAPI.send(currentUser.id, recipient.id, content);
             
             alert('메시지가 전송되었습니다');
             navigate('/messages');
         } catch (err) {
             console.error('메시지 전송 오류:', err);
-            setError('메시지 전송에 실패했습니다');
+            const msg = err?.response?.data?.error || '메시지 전송에 실패했습니다';
+            setError(msg);
         } finally {
             setLoading(false);
         }

@@ -41,6 +41,9 @@ export const authAPI = {
 
   deleteUser: (userId) =>
     api.delete(`/users/${userId}`),
+
+  getByEmail: (email) =>
+    api.get(`/users/email/${encodeURIComponent(email)}`),
 };
 
 // Post API

@@ -142,16 +142,15 @@ const MessagePage = () => {
             ))}
           </div>
         )}
+        {/* 쪽지 작성 버튼 (메인과 동일 정렬) */}
+        <button
+          className="fab-button"
+          onClick={() => navigate('/messages/write')}
+          title="새 쪽지 작성"
+        >
+          ✉️
+        </button>
       </div>
-
-      {/* 쪽지 작성 버튼 */}
-      <button
-        className="fab-button"
-        onClick={() => navigate('/messages/write')}
-        title="새 쪽지 작성"
-      >
-        ✉️
-      </button>
     </div>
   );
 };
