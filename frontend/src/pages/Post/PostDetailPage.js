@@ -32,7 +32,14 @@ function PostDetailPage() {
       
       // 게시글 조회 (조회수 증가)
       const postResponse = await postAPI.getOne(id);
-      const postData = postResponse.data;
+      let postData = postResponse.data;
+      
+      // 조회수를 항상 1 증가시키고 localStorage에 저장
+      const viewKey = `post_${id}_viewCount`;
+      const currentViews = parseInt(localStorage.getItem(viewKey) || postData.viewCount || 0);
+      const newViewCount = currentViews + 1;
+      localStorage.setItem(viewKey, newViewCount.toString());
+      postData.viewCount = newViewCount;
       
       // 저장된 좋아요 수가 있으면 사용
       const likeKey = `post_${id}_likes`;
@@ -262,9 +269,16 @@ function PostDetailPage() {
           <>
             <h2 className="post-detail-title">{post.title}</h2>
             <div className="post-detail-meta">
-              <span className="post-author">{post.userId}</span>
               <span className="post-time">
-                {new Date(post.createdAt).toLocaleString()}
+                {new Date(post.createdAt).toLocaleString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                })}
               </span>
               <span className="post-views">조회 {post.viewCount}</span>
             </div>
@@ -312,9 +326,15 @@ function PostDetailPage() {
             comments.map((comment) => (
               <div key={comment.id} className="comment-item">
                 <div className="comment-header">
-                  <span className="comment-author">{comment.userId}</span>
                   <span className="comment-time">
-                    {new Date(comment.createdAt).toLocaleString()}
+                    {new Date(comment.createdAt).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    })}
                   </span>
                   {comment.userId === currentUser.id && (
                     <button

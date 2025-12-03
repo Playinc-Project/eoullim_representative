@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "posts", indexes = {
@@ -50,12 +52,14 @@ public class Post {
     
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZonedDateTime kst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.createdAt = kst.toLocalDateTime();
+        this.updatedAt = kst.toLocalDateTime();
     }
     
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        ZonedDateTime kst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = kst.toLocalDateTime();
     }
 }
