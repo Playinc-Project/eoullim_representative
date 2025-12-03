@@ -131,14 +131,10 @@
   color: #999;
 }
 
-.post-author {
+.post-time {
   font-weight: 500;
   color: #666;
-}
-
-.post-time {
   flex: 1;
-  text-align: center;
 }
 
 .post-stats {

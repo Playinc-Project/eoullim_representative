@@ -20,8 +20,23 @@ function Main() {
       setLoading(true);
       const response = await postAPI.getAll();
       
+      // localStorage에서 저장된 좋아요수와 조회수를 반영
+      const postsWithLocalData = response.data.map(post => {
+        const likeKey = `post_${post.id}_likes`;
+        const viewKey = `post_${post.id}_viewCount`;
+        
+        const savedLikes = localStorage.getItem(likeKey);
+        const savedViews = localStorage.getItem(viewKey);
+        
+        return {
+          ...post,
+          likeCount: savedLikes ? parseInt(savedLikes) : post.likeCount,
+          viewCount: savedViews ? parseInt(savedViews) : post.viewCount
+        };
+      });
+      
       // 최신 글부터 표시
-      const sortedPosts = response.data.sort(
+      const sortedPosts = postsWithLocalData.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       
@@ -33,22 +48,6 @@ function Main() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return '방금';
-    if (diffMins < 60) return `${diffMins}분 전`;
-    if (diffHours < 24) return `${diffHours}시간 전`;
-    if (diffDays < 7) return `${diffDays}일 전`;
-    
-    return date.toLocaleDateString();
   };
 
   if (!currentUser.id) {
@@ -104,11 +103,20 @@ function Main() {
                   {post.content.length > 100 ? '...' : ''}
                 </p>
                 <div className="post-footer">
-                  <span className="post-author">{post.userId}</span>
-                  <span className="post-time">{formatDate(post.createdAt)}</span>
+                  <span className="post-time">
+                    {new Date(post.createdAt).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      weekday: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    })}
+                  </span>
                   <div className="post-stats">
                     <span>♥ {post.likeCount}</span>
-                    <span>💬 댓글</span>
+                    <span>💬 {post.commentCount || 0}</span>
                     <button
                       className="post-more-button"
                       onClick={(e) => {

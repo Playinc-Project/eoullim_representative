@@ -49,8 +49,17 @@ export const authAPI = {
 // Post API
 export const postAPI = {
   // Create post: backend expects userId inside request body (PostRequestDTO)
-  create: (userId, title, content) =>
-    api.post('/posts', { userId, title, content }),
+  create: (userId, title, content) => {
+    console.log('=== API 요청 데이터 ===');
+    console.log('userId:', userId, 'type:', typeof userId);
+    console.log('title:', title, 'type:', typeof title);
+    console.log('content:', content, 'type:', typeof content);
+    
+    const requestData = { userId, title, content };
+    console.log('전송할 데이터:', requestData);
+    
+    return api.post('/posts', requestData);
+  },
   
   toggleLike: (postId, userId) =>
   api.post(`/posts/${postId}/like`, {}, { params: { userId } }),

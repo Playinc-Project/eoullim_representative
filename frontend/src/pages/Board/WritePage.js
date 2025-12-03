@@ -23,24 +23,31 @@ function WritePage() {
       return;
     }
 
+    console.log('=== 게시글 작성 요청 ===');
+    console.log('Current User:', currentUser);
+    console.log('User ID:', currentUser.id);
+    console.log('Title:', title);
+    console.log('Content length:', content.length);
+
+    if (!currentUser.id) {
+      setError('로그인이 필요합니다');
+      return;
+    }
+
     setLoading(true);
     try {
-      if (!currentUser.id) {
-        throw new Error('로그인 정보가 없습니다');
-      }
       const response = await postAPI.create(currentUser.id, title, content);
-      if (!response?.data?.id) {
-        console.warn('응답 데이터에 id가 없습니다:', response?.data);
-      }
+      console.log('✅ 게시글 생성 성공:', response.data);
       navigate(`/post/${response.data.id}`);
     } catch (err) {
-      console.error('Write error:', err);
+      console.error('❌ 게시글 생성 실패:', err);
       if (err.response?.data) {
-        setError(err.response.data);
+        setError(`오류: ${err.response.data}`);
       } else {
         setError('게시글 작성에 실패했습니다');
       }
-    } finally {
+        }
+        finally {
       setLoading(false);
     }
   };

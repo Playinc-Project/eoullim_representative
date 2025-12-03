@@ -17,6 +17,7 @@ public class PostDTO {
     private String content;
     private Integer viewCount;
     private Integer likeCount;
+    private Integer commentCount; // 댓글 수 추가
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000") // React 개발 서버
+@CrossOrigin(origins = "http://localhost:3001") // React 개발 서버 3001만 사용
 public class UserController {
     
     private final UserService userService;

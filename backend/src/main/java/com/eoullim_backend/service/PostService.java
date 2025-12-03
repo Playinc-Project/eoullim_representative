@@ -31,8 +31,22 @@ public class PostService {
     @Transactional
     @CacheEvict(value = "posts", allEntries = true)
     public PostDTO createPost(Long userId, PostRequestDTO requestDTO) {
+        System.out.println("=== PostService.createPost ===");
+        System.out.println("요청된 userId: " + userId);
+        System.out.println("전체 사용자 수: " + userRepository.count());
+        System.out.println("사용자 존재 여부: " + userRepository.existsById(userId));
+        
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    System.out.println("❌ 사용자 ID " + userId + " 를 찾을 수 없습니다");
+                    // 디버그용: 전체 사용자 목록 출력
+                    userRepository.findAll().forEach(u -> 
+                        System.out.println("기존 사용자: ID=" + u.getId() + ", Email=" + u.getEmail())
+                    );
+                    return new RuntimeException("사용자를 찾을 수 없습니다.");
+                });
+        
+        System.out.println("✅ 사용자 찾음: " + user.getEmail());
         
         Post post = Post.builder()
                 .user(user)
@@ -41,6 +55,7 @@ public class PostService {
                 .build();
         
         Post savedPost = postRepository.save(post);
+        System.out.println("✅ 게시글 저장됨: ID=" + savedPost.getId());
         return convertToDTO(savedPost);
     }
     
@@ -114,6 +129,9 @@ public class PostService {
     }
     
     private PostDTO convertToDTO(Post post) {
+        // 댓글 수 계산
+        int commentCount = commentRepository.countByPostId(post.getId());
+        
         return PostDTO.builder()
                 .id(post.getId())
                 .userId(post.getUser().getId())
@@ -121,6 +139,7 @@ public class PostService {
                 .content(post.getContent())
                 .viewCount(post.getViewCount())
                 .likeCount(post.getLikeCount())
+                .commentCount(commentCount) // 댓글 수 추가
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
