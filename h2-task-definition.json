@@ -1,0 +1,39 @@
+{
+  "family": "eoullim-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::471112519809:role/service-role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "eoullim-backend",
+      "image": "471112519809.dkr.ecr.us-east-1.amazonaws.com/eoullim-backend:latest",
+      "portMappings": [
+        {
+          "containerPort": 8081,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "SERVER_PORT",
+          "value": "8081"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/eoullim-backend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      },
+      "cpu": 512,
+      "memory": 1024,
+      "memoryReservation": 1024
+    }
+  ]
+}
