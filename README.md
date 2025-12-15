@@ -1,4 +1,221 @@
-# Getting Started With Create React App
+# Eoullim - 소셜 네트워크 플랫폼
+
+React + Spring Boot 기반의 소셜 네트워크 서비스
+
+## 프로젝트 구조
+
+- **Frontend**: React + Firebase (CloudFront로 배포)
+- **Backend**: Spring Boot + H2 Database (ECS Fargate로 배포)
+- **Infrastructure**: AWS (CloudFront, API Gateway, ALB, ECS)
+
+---
+
+## 📚 API 문서
+
+### Base URL
+- **Production**: `https://qmmcl0wmqh.execute-api.us-east-1.amazonaws.com/prod/api`
+- **Development**: `http://localhost:8080/api`
+
+---
+
+### 👤 사용자 관련 API
+
+#### 1. 회원가입
+```http
+POST /api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "username": "사용자이름",
+  "profileImage": "이미지URL (선택)",
+  "bio": "자기소개 (선택)"
+}
+```
+
+#### 2. 로그인
+```http
+POST /api/users/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+**응답**: 사용자 정보 객체
+
+#### 3. 사용자 조회
+```http
+GET /api/users/{id}
+```
+
+#### 4. 이메일로 사용자 조회
+```http
+GET /api/users/email/{email}
+```
+
+#### 5. 사용자 정보 수정
+```http
+PUT /api/users/{id}
+Content-Type: application/json
+
+{
+  "username": "새이름",
+  "profileImage": "새이미지URL",
+  "bio": "새자기소개"
+}
+```
+
+#### 6. 사용자 삭제
+```http
+DELETE /api/users/{id}
+```
+
+---
+
+### 📝 게시글 관련 API
+
+#### 1. 게시글 작성
+```http
+POST /api/posts
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "title": "게시글 제목",
+  "content": "게시글 내용",
+  "images": ["이미지URL1", "이미지URL2"] (선택)
+}
+```
+
+#### 2. 전체 게시글 목록
+```http
+GET /api/posts
+```
+
+#### 3. 페이징된 게시글 목록
+```http
+GET /api/posts/page?page=0&size=10
+```
+
+#### 4. 게시글 상세 조회
+```http
+GET /api/posts/{id}
+```
+
+#### 5. 특정 사용자의 게시글
+```http
+GET /api/posts/user/{userId}
+```
+
+#### 6. 게시글 수정
+```http
+PUT /api/posts/{id}
+Content-Type: application/json
+
+{
+  "title": "수정된 제목",
+  "content": "수정된 내용",
+  "images": ["이미지URL"]
+}
+```
+
+#### 7. 게시글 삭제
+```http
+DELETE /api/posts/{id}
+```
+
+#### 8. 게시글 좋아요
+```http
+POST /api/posts/{id}/like?userId={userId}
+```
+
+#### 9. 게시글의 댓글 조회
+```http
+GET /api/posts/{postId}/comments
+```
+
+#### 10. 게시글에 댓글 작성
+```http
+POST /api/posts/{postId}/comments
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "댓글 내용"
+}
+```
+
+---
+
+### 💬 댓글 관련 API
+
+#### 1. 댓글 작성
+```http
+POST /api/comments
+Content-Type: application/json
+
+{
+  "postId": 1,
+  "userId": 1,
+  "content": "댓글 내용"
+}
+```
+
+#### 2. 게시글의 댓글 조회
+```http
+GET /api/comments/post/{postId}
+```
+
+#### 3. 댓글 수정
+```http
+PUT /api/comments/{id}
+Content-Type: application/json
+
+{
+  "content": "수정된 댓글 내용"
+}
+```
+
+#### 4. 댓글 삭제
+```http
+DELETE /api/comments/{id}
+```
+
+---
+
+### 📨 쪽지 관련 API
+
+#### 1. 쪽지 보내기
+```http
+POST /api/messages?senderId={senderId}&recipientId={recipientId}
+Content-Type: application/json
+
+{
+  "content": "쪽지 내용"
+}
+```
+
+#### 2. 받은 쪽지 목록
+```http
+GET /api/messages/received/{userId}
+```
+
+#### 3. 보낸 쪽지 목록
+```http
+GET /api/messages/sent/{userId}
+```
+
+#### 4. 쪽지 삭제
+```http
+DELETE /api/messages/{id}?userId={userId}
+```
+
+---
+
+## Getting Started With Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
