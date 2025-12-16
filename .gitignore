@@ -1,5 +1,16 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# NestJS
+backend-nestjs/node_modules/
+backend-nestjs/dist/
+backend-nestjs/.env
+backend-nestjs/.env.local
+backend-nestjs/.DS_Store
+
+# Logs
+backend-nestjs/*.log
+backend-nestjs/npm-debug.log*
+
 # dependencies
 /node_modules
 /.pnp
