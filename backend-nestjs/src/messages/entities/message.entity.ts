@@ -10,13 +10,13 @@ import { User } from '../../users/entities/user.entity';
 
 @Entity('messages')
 export class Message {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'sender_id', type: 'bigint', nullable: false })
+  @Column({ name: 'sender_id', type: 'integer', nullable: false })
   senderId: number;
 
-  @Column({ name: 'recipient_id', type: 'bigint', nullable: false })
+  @Column({ name: 'recipient_id', type: 'integer', nullable: false })
   recipientId: number;
 
   @ManyToOne(() => User, { nullable: false })

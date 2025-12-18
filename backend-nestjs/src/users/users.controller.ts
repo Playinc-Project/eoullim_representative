@@ -52,7 +52,7 @@ export class UsersController {
     try {
       return await this.usersService.getUserById(+id);
     } catch (error) {
-      throw new HttpException(null, HttpStatus.NOT_FOUND);
+      throw new HttpException({ error: '사용자를 찾을 수 없습니다' }, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -62,15 +62,16 @@ export class UsersController {
     try {
       const user = await this.usersService.findByEmail(email);
       if (!user) {
-        throw new HttpException(null, HttpStatus.NOT_FOUND);
+        throw new HttpException({ error: '사용자를 찾을 수 없습니다' }, HttpStatus.NOT_FOUND);
       }
       return user;
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        { error: error.message },
-        HttpStatus.BAD_REQUEST,
-      );
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error ? error.message : '요청이 올바르지 않습니다.';
+      throw new HttpException({ error: message }, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -83,7 +84,9 @@ export class UsersController {
     try {
       return await this.usersService.updateUser(+id, requestDTO);
     } catch (error) {
-      throw new HttpException(null, HttpStatus.BAD_REQUEST);
+      const message =
+        error instanceof Error ? error.message : '사용자 수정에 실패했습니다';
+      throw new HttpException({ error: message }, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -94,7 +97,9 @@ export class UsersController {
       await this.usersService.deleteUser(+id);
       return null;
     } catch (error) {
-      throw new HttpException(null, HttpStatus.BAD_REQUEST);
+      const message =
+        error instanceof Error ? error.message : '사용자 삭제에 실패했습니다';
+      throw new HttpException({ error: message }, HttpStatus.BAD_REQUEST);
     }
   }
 }

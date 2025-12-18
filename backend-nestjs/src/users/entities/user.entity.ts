@@ -10,7 +10,7 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn()  // SQLite 호환: integer 자동 사용
   id: number;
 
   @Column({ unique: true, nullable: false })

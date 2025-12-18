@@ -16,13 +16,13 @@ import { Post } from '../../posts/entities/post.entity';
 @Index('idx_comment_user_id', ['userId'])
 @Index('idx_comment_created_at', ['createdAt'])
 export class Comment {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'post_id', type: 'bigint', nullable: false })
+  @Column({ name: 'post_id', type: 'integer', nullable: false })
   postId: number;
 
-  @Column({ name: 'user_id', type: 'bigint', nullable: false })
+  @Column({ name: 'user_id', type: 'integer', nullable: false })
   userId: number;
 
   @ManyToOne(() => Post, { lazy: true })

@@ -16,10 +16,10 @@ import { User } from '../../users/entities/user.entity';
 @Index('idx_post_view_count', ['viewCount'])
 @Index('idx_post_like_count', ['likeCount'])
 export class Post {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'user_id', type: 'bigint', nullable: false })
+  @Column({ name: 'user_id', type: 'integer', nullable: false })
   userId: number;
 
   @ManyToOne(() => User, { lazy: true })

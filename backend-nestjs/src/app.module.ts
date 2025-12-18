@@ -15,20 +15,16 @@ import { MessagesModule } from './messages/messages.module';
       envFilePath: '.env',
     }),
 
-    // TypeORM 설정 (Spring과 동일)
+    // TypeORM 설정 (SQLite 인메모리 - Spring H2와 동일한 역할)
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'mysql',
-        host: config.get('DATABASE_HOST'),
-        port: +config.get('DATABASE_PORT'),
-        username: config.get('DATABASE_USER'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
+        type: 'sqlite',
+        database: ':memory:', // 인메모리 데이터베이스 (H2와 동일)
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: config.get('DATABASE_SYNCHRONIZE') === 'true',
-        timezone: '+09:00', // Asia/Seoul
+        synchronize: true, // 개발용 자동 스키마 동기화
         logging: config.get('NODE_ENV') === 'development',
+        dropSchema: true, // 재시작 시 스키마 초기화 (H2 모드와 동일)
       }),
     }),
 

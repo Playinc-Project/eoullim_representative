@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/sqlite3": "^5.1.0"
+  }
+}
