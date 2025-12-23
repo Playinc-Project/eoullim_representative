@@ -17,16 +17,20 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
       envFilePath: '.env',
     }),
 
-    // TypeORM 설정 (SQLite 인메모리 - Spring H2와 동일한 역할)
+// TypeORM 설정 (MySQL 환경변수 기반)   
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'sqlite',
-        database: ':memory:', // 인메모리 데이터베이스 (H2와 동일)
+        type: config.get('DATABASE_TYPE') || 'mysql',
+        host: config.get('DATABASE_HOST'),
+        port: parseInt(config.get('DATABASE_PORT')) || 3306,
+        username: config.get('DATABASE_USER'),
+        password: config.get('DATABASE_PASSWORD'),
+        database: config.get('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // 개발용 자동 스키마 동기화
+        synchronize: config.get('DATABASE_SYNCHRONIZE') === 'true',
         logging: config.get('NODE_ENV') === 'development',
-        dropSchema: true, // 재시작 시 스키마 초기화 (H2 모드와 동일)
+        timezone: 'Z',
       }),
     }),
 
