@@ -41,8 +41,15 @@ function WritePage() {
       navigate(`/post/${response.data.id}`);
     } catch (err) {
       console.error('❌ 게시글 생성 실패:', err);
-      if (err.response?.data) {
-        setError(`오류: ${err.response.data}`);
+      console.error('❌ 에러 응답:', err.response?.data);
+      console.error('❌ 에러 상태:', err.response?.status);
+      
+      if (err.response?.status === 500) {
+        setError('서버 오류가 발생했습니다. 로그인 상태를 확인해주세요.');
+      } else if (err.response?.data?.message) {
+        setError(`오류: ${err.response.data.message}`);
+      } else if (err.response?.data) {
+        setError(`오류: ${JSON.stringify(err.response.data)}`);
       } else {
         setError('게시글 작성에 실패했습니다');
       }

@@ -1,0 +1,78 @@
+### Test NestJS Server Connection
+GET http://localhost:3001/
+
+### Test Users API
+GET http://localhost:3001/users
+
+### Create User
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "username": "testuser",
+  "bio": "테스트 사용자입니다"
+}
+
+### Get User by ID
+GET http://localhost:3001/users/1
+
+### Update User
+PUT http://localhost:3001/users/1
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "username": "updateduser",
+  "bio": "수정된 사용자입니다"
+}
+
+### Delete User
+DELETE http://localhost:3001/users/1
+
+### Test Posts API
+GET http://localhost:3001/posts
+
+### Create Post
+POST http://localhost:3001/posts
+Content-Type: application/json
+
+{
+  "title": "테스트 게시글",
+  "content": "이것은 테스트 게시글입니다",
+  "userId": 1
+}
+
+### Get Posts with Pagination
+GET http://localhost:3001/posts?page=1&limit=10
+
+### Test Comments API
+GET http://localhost:3001/comments
+
+### Create Comment
+POST http://localhost:3001/comments
+Content-Type: application/json
+
+{
+  "content": "테스트 댓글입니다",
+  "postId": 1,
+  "userId": 1
+}
+
+### Test Messages API
+GET http://localhost:3001/messages
+
+### Send Message
+POST http://localhost:3001/messages
+Content-Type: application/json
+
+{
+  "content": "안녕하세요! 테스트 메시지입니다",
+  "recipientId": 2,
+  "senderId": 1
+}
+
+### Get Messages for User
+GET http://localhost:3001/messages/1

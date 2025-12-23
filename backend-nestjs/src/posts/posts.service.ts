@@ -54,25 +54,20 @@ export class PostsService {
 
   // 게시글 조회 (단일, 조회수 증가)
   async getPost(id: number): Promise<PostDTO> {
-    // 캐시 확인
-    const cached = await this.cacheManager.get<PostDTO>(`posts:${id}`);
-    if (cached) {
-      return cached;
-    }
-
     const post = await this.postRepository.findOneBy({ id });
     if (!post) {
       throw new Error('게시글을 찾을 수 없습니다.');
     }
 
-    // 조회수 증가
+    // 조회수 증가 (매번 실행되도록)
     post.viewCount += 1;
     await this.postRepository.save(post);
 
     const dto = await this.convertToDTO(post);
 
-    // 캐시 저장
-    await this.cacheManager.set(`posts:${id}`, dto, 60000);
+    // 조회수가 변경되었으므로 관련 캐시 삭제
+    await this.cacheManager.del(`posts:${id}`);
+    await this.cacheManager.del('posts:all');
 
     return dto;
   }
@@ -160,7 +155,15 @@ export class PostsService {
 
   // 좋아요 토글 (미구현, Spring과 동일)
   async toggleLike(id: number, userId: number): Promise<Post> {
-    throw new Error('Unimplemented method: toggleLike');
+    const post = await this.postRepository.findOneBy({ id });
+    if (!post) {
+      throw new Error('게시글을 찾을 수 없습니다.');
+    }
+    
+    // 현재 좋아요 수 토글 (단순히 카운트 증감)
+    post.likeCount = post.likeCount + 1; // Spring Boot와 동일한 단순 증가
+    
+    return await this.postRepository.save(post);
   }
 
   private async convertToDTO(post: Post): Promise<PostDTO> {

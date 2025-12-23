@@ -108,7 +108,7 @@ CREATE INDEX idx_comment_created_at ON comments(created_at);
 - Docker 컨테이너화
 
 ### 🚀 배포 준비 완료
-- **개발 환경**: localhost:3000 (Frontend) + localhost:8080 (Backend)
+- **개발 환경**: localhost:3001 (Frontend) + localhost:8081 (Backend)
 - **Docker 환경**: 완전히 컨테이너화됨
 - **CI/CD**: GitHub Actions 설정 완료
 - **성능**: 최적화 구현 완료

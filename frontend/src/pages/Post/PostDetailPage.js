@@ -30,16 +30,20 @@ function PostDetailPage() {
     try {
       setLoading(true);
       
+      // ID가 undefined인지 체크
+      if (!id) {
+        console.error('Post ID가 undefined입니다');
+        setError('게시글 ID를 찾을 수 없습니다.');
+        setLoading(false);
+        return;
+      }
+      
       // 게시글 조회 (조회수 증가)
       const postResponse = await postAPI.getOne(id);
-      let postData = postResponse.data;
+      let postData = postResponse.data.data || postResponse.data; // NestJS 응답 구조 고려
       
-      // 조회수를 항상 1 증가시키고 localStorage에 저장
-      const viewKey = `post_${id}_viewCount`;
-      const currentViews = parseInt(localStorage.getItem(viewKey) || postData.viewCount || 0);
-      const newViewCount = currentViews + 1;
-      localStorage.setItem(viewKey, newViewCount.toString());
-      postData.viewCount = newViewCount;
+      // 조회수는 백엔드에서 관리하므로 localStorage 사용 안 함
+      // 단순히 게시글 데이터를 그대로 사용
       
       // 저장된 좋아요 수가 있으면 사용
       const likeKey = `post_${id}_likes`;
@@ -58,8 +62,12 @@ function PostDetailPage() {
       
       setError('');
     } catch (err) {
-      setError('게시글을 불러올 수 없습니다');
       console.error('Load error:', err);
+      if (err.response?.status === 404) {
+        setError('존재하지 않는 게시글입니다.');
+      } else {
+        setError('게시글을 불러올 수 없습니다');
+      }
     } finally {
       setLoading(false);
     }

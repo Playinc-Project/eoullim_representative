@@ -46,6 +46,20 @@ export class PostsController {
         data: post,
       };
     } catch (error: any) {
+      console.error('❌ Posts Controller 에러:', error);
+      
+      // 사용자를 찾을 수 없는 경우 특별 처리
+      if (error.message?.includes('사용자를 찾을 수 없습니다')) {
+        throw new HttpException(
+          {
+            success: false,
+            message: '존재하지 않는 사용자입니다. 다시 로그인해주세요.',
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      
       throw new HttpException(
         {
           success: false,

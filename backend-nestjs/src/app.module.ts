@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
+import { APP_FILTER } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { MessagesModule } from './messages/messages.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 @Module({
   imports: [
@@ -38,6 +40,12 @@ import { MessagesModule } from './messages/messages.module';
     PostsModule,
     CommentsModule,
     MessagesModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

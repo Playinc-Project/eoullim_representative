@@ -1,0 +1,97 @@
+### 1. Test NestJS Server Connection
+GET http://localhost:8081/api/
+
+### 2. 사용자 목록 조회 (빈 상태 확인)
+GET http://localhost:8081/api/users
+
+### 3. 사용자 회원가입
+POST http://localhost:8081/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "test1@example.com",
+  "password": "password123",
+  "username": "testuser1",
+  "bio": "첫번째 테스트 사용자입니다"
+}
+
+### 4. 두번째 사용자 회원가입
+POST http://localhost:8081/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "test2@example.com",
+  "password": "password123",
+  "username": "testuser2",
+  "bio": "두번째 테스트 사용자입니다"
+}
+
+### 5. 로그인 테스트
+POST http://localhost:8081/api/users/login
+Content-Type: application/json
+
+{
+  "email": "test1@example.com",
+  "password": "password123"
+}
+
+### 6. 사용자 목록 다시 조회 (데이터 확인)
+GET http://localhost:8081/api/users
+
+### 7. 특정 사용자 조회
+GET http://localhost:8081/api/users/1
+
+### 8. 게시글 작성 (사용자1)
+POST http://localhost:8081/api/posts
+Content-Type: application/json
+
+{
+  "title": "첫번째 게시글입니다",
+  "content": "NestJS 백엔드에서 작성한 첫번째 게시글 내용입니다.",
+  "userId": 1
+}
+
+### 9. 게시글 작성 (사용자2)
+POST http://localhost:8081/api/posts
+Content-Type: application/json
+
+{
+  "title": "두번째 게시글",
+  "content": "두번째 사용자가 작성한 게시글입니다.",
+  "userId": 2
+}
+
+### 10. 게시글 목록 조회
+GET http://localhost:8081/api/posts
+
+### 11. 게시글 상세 조회
+GET http://localhost:8081/api/posts/1
+
+### 12. 댓글 작성
+POST http://localhost:8081/api/comments
+Content-Type: application/json
+
+{
+  "content": "첫번째 댓글입니다!",
+  "postId": 1,
+  "userId": 2
+}
+
+### 13. 게시글의 댓글 조회
+GET http://localhost:8081/api/comments/post/1
+
+### 14. 메시지 전송
+POST http://localhost:8081/api/messages
+Content-Type: application/json
+
+{
+  "content": "안녕하세요! 메시지 테스트입니다.",
+  "senderId": 1,
+  "recipientId": 2
+}
+
+### 15. 받은 메시지 조회
+GET http://localhost:8081/api/messages/received/2
+
+### 16. 보낸 메시지 조회
+GET http://localhost:8081/api/messages/sent/1

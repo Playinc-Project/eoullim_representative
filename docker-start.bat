@@ -15,8 +15,8 @@ echo 📊 컨테이너 상태 확인...
 docker-compose ps
 
 echo ✅ 서비스 URL:
-echo   - Frontend: http://localhost:3000
-echo   - Backend:  http://localhost:8080
+echo   - Frontend: http://localhost:3001
+echo   - Backend:  http://localhost:8081
 echo   - MySQL:    localhost:3306
 
 echo 📝 로그 확인하려면: docker-compose logs -f [service명]

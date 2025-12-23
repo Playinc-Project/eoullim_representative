@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Post } from '../posts/entities/post.entity';
+import { Comment } from '../comments/entities/comment.entity';
+import { Message } from '../messages/entities/message.entity';
 import { UserDTO, UserRequestDTO } from './dto/user.dto';
 
 @Injectable()
@@ -9,6 +12,13 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
+    private dataSource: DataSource,
   ) {}
 
   // 회원가입 (Spring UserService와 동일)
@@ -58,6 +68,12 @@ export class UsersService {
     return this.convertToDTO(user);
   }
 
+  // 모든 사용자 조회
+  async getAllUsers(): Promise<UserDTO[]> {
+    const users = await this.userRepository.find();
+    return users.map(user => this.convertToDTO(user));
+  }
+
   // 사용자 조회
   async getUserById(id: number): Promise<UserDTO> {
     const user = await this.userRepository.findOneBy({ id });
@@ -93,36 +109,61 @@ export class UsersService {
     return this.convertToDTO(updated);
   }
 
-  // 사용자 삭제 (Spring과 동일한 순서)
+  // 사용자 삭제 (Spring CommentService.deleteUser와 100% 동일한 순서)
   async deleteUser(id: number): Promise<void> {
-    // 1. 메시지 삭제
-    await this.userRepository.query(
-      'DELETE FROM messages WHERE sender_id = ? OR recipient_id = ?',
-      [id, id],
-    );
+    console.log(`🗑️ Starting cascade delete for user ID: ${id}`);
+    
+    // Spring Boot CommentService.deleteUser()와 동일한 순서 구현
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // 2. 댓글 삭제
-    await this.userRepository.query('DELETE FROM comments WHERE user_id = ?', [
-      id,
-    ]);
-
-    // 3. 게시글의 댓글 삭제 후 게시글 삭제
-    const posts = await this.userRepository.query(
-      'SELECT id FROM posts WHERE user_id = ?',
-      [id],
-    );
-    for (const post of posts as { id: number }[]) {
-      await this.userRepository.query(
-        'DELETE FROM comments WHERE post_id = ?',
-        [post.id],
-      );
-      await this.userRepository.query('DELETE FROM posts WHERE id = ?', [
-        post.id,
+    try {
+      // 1단계: 사용자가 보내거나 받은 메시지 삭제 (Spring: messageService.deleteByUserId)
+      console.log('🔹 Step 1: Deleting messages (sent and received)...');
+      const deletedMessages = await queryRunner.manager.delete(Message, [
+        { senderId: id },
+        { recipientId: id }
       ]);
-    }
+      console.log(`   ✅ Deleted ${deletedMessages.affected} messages`);
 
-    // 4. 사용자 삭제
-    await this.userRepository.delete(id);
+      // 2단계: 사용자가 작성한 댓글 삭제 (Spring: commentRepository.deleteByUserId)
+      console.log('🔹 Step 2: Deleting user comments...');
+      const deletedUserComments = await queryRunner.manager.delete(Comment, { userId: id });
+      console.log(`   ✅ Deleted ${deletedUserComments.affected} user comments`);
+
+      // 3단계: 사용자 게시글에 달린 댓글들 삭제 + 게시글 삭제
+      console.log('🔹 Step 3: Processing user posts...');
+      const userPosts = await queryRunner.manager.find(Post, { 
+        where: { userId: id },
+        select: ['id'] 
+      });
+      
+      for (const post of userPosts) {
+        // 3a: 각 게시글의 댓글 삭제 (Spring: commentRepository.deleteByPostId)
+        const deletedPostComments = await queryRunner.manager.delete(Comment, { postId: post.id });
+        console.log(`   ✅ Deleted ${deletedPostComments.affected} comments from post ${post.id}`);
+        
+        // 3b: 게시글 삭제 (Spring: postRepository.deleteById)
+        await queryRunner.manager.delete(Post, { id: post.id });
+        console.log(`   ✅ Deleted post ${post.id}`);
+      }
+
+      // 4단계: 사용자 삭제 (Spring: userRepository.deleteById)
+      console.log('🔹 Step 4: Deleting user...');
+      const deletedUser = await queryRunner.manager.delete(User, { id });
+      console.log(`   ✅ Deleted user: ${deletedUser.affected}`);
+
+      await queryRunner.commitTransaction();
+      console.log(`🎉 Cascade delete completed successfully for user ID: ${id}`);
+      
+    } catch (error) {
+      console.error(`❌ Cascade delete failed for user ID: ${id}`, error);
+      await queryRunner.rollbackTransaction();
+      throw new Error(`Failed to delete user and related data: ${error.message}`);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private convertToDTO(user: User): UserDTO {

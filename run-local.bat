@@ -18,7 +18,7 @@ start "Eoullim Frontend" cmd /k "cd /d C:\Eoullim\frontend && npm start"
 
 echo.
 echo ✅ 서비스 시작됨:
-echo   - Frontend: http://localhost:3000 (자동으로 브라우저에서 열림)
+echo   - Frontend: http://localhost:3001 (자동으로 브라우저에서 열림)
 echo   - Backend:  http://localhost:8080
 echo.
 echo 📝 서비스를 중지하려면 각 창을 닫거나 Ctrl+C를 누르세요.

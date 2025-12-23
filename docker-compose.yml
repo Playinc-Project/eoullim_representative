@@ -44,7 +44,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      REACT_APP_API_URL: http://localhost:8080/api
+      REACT_APP_API_URL: http://localhost:8081/api
     networks:
       - eoullim-network
 

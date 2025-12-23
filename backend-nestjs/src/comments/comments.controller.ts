@@ -17,18 +17,16 @@ import { CommentDTO } from './dto/comment.dto';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  // 댓글 생성: POST /api/comments?postId=X&userId=Y
+  // 댓글 생성: POST /api/comments
   @Post()
   async createComment(
-    @Query('postId') postId: string,
-    @Query('userId') userId: string,
-    @Body() commentDTO: CommentDTO,
+    @Body() body: { postId: number; userId: number; content: string },
   ) {
     try {
       return await this.commentsService.createComment(
-        +postId,
-        +userId,
-        commentDTO.content,
+        body.postId,
+        body.userId,
+        body.content,
       );
     } catch (error) {
       throw new HttpException({ error: '댓글 생성에 실패했습니다' }, HttpStatus.BAD_REQUEST);

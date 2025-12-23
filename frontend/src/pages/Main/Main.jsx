@@ -20,18 +20,18 @@ function Main() {
       setLoading(true);
       const response = await postAPI.getAll();
       
-      // localStorage에서 저장된 좋아요수와 조회수를 반영
-      const postsWithLocalData = response.data.map(post => {
+      // 백엔드에서 {success: true, data: posts} 형태로 응답하므로 response.data.data 사용
+      const postsData = response.data.data || response.data || [];
+      
+      // localStorage에서 저장된 좋아요수만 반영 (조회수는 백엔드 값 사용)
+      const postsWithLocalData = postsData.map(post => {
         const likeKey = `post_${post.id}_likes`;
-        const viewKey = `post_${post.id}_viewCount`;
-        
         const savedLikes = localStorage.getItem(likeKey);
-        const savedViews = localStorage.getItem(viewKey);
         
         return {
           ...post,
           likeCount: savedLikes ? parseInt(savedLikes) : post.likeCount,
-          viewCount: savedViews ? parseInt(savedViews) : post.viewCount
+          // viewCount는 백엔드 값 그대로 사용
         };
       });
       

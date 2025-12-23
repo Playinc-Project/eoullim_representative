@@ -19,10 +19,12 @@ export class UsersController {
   // 회원가입: POST /api/users/signup
   @Post('signup')
   async signup(@Body() requestDTO: UserRequestDTO) {
+    console.log('💻 회원가입 요청 데이터:', JSON.stringify(requestDTO));
     try {
       const user = await this.usersService.signup(requestDTO);
       return user;
     } catch (error) {
+      console.error('❌ 회원가입 오류:', error);
       const message = error instanceof Error ? error.message : '회원가입 요청이 올바르지 않습니다.';
       if (message.includes('이미 존재하는 이메일')) {
         throw new HttpException({ error: message }, HttpStatus.CONFLICT);
@@ -43,6 +45,17 @@ export class UsersController {
     } catch (error) {
       const message = error instanceof Error ? error.message : '로그인에 실패했습니다.';
       throw new HttpException({ error: message }, HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  // 전체 사용자 목록 조회: GET /api/users
+  @Get()
+  async getAllUsers() {
+    try {
+      return await this.usersService.getAllUsers();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '사용자 목록 조회에 실패했습니다.';
+      throw new HttpException({ error: message }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

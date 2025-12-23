@@ -14,7 +14,7 @@ React + Spring Boot 기반의 소셜 네트워크 서비스
 
 ### Base URL
 - **Production**: `https://qmmcl0wmqh.execute-api.us-east-1.amazonaws.com/prod/api`
-- **Development**: `http://localhost:8080/api`
+- **Development**: `http://localhost:8081/api`
 
 ---
 
@@ -226,7 +226,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
