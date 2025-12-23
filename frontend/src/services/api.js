@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // API 기본 URL (환경에 따라 수정)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'http://YOUR_EC2_PUBLIC_IP:8081/api'
+  : process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -18,6 +20,20 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// NestJS 응답 구조 통일 처리
+api.interceptors.response.use(
+  (response) => {
+    // NestJS에서 {success: true, data: ...} 형태로 응답하는 경우 data 부분만 추출
+    if (response.data && response.data.success && response.data.data !== undefined) {
+      response.data = response.data.data;
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Auth API
 export const authAPI = {
@@ -55,7 +71,12 @@ export const postAPI = {
     console.log('title:', title, 'type:', typeof title);
     console.log('content:', content, 'type:', typeof content);
     
-    const requestData = { userId, title, content };
+    // userId를 숫자로 변환 (DTO @IsNumber() 검증 통과를 위해)
+    const requestData = { 
+      userId: parseInt(userId), 
+      title: String(title), 
+      content: String(content) 
+    };
     console.log('전송할 데이터:', requestData);
     
     return api.post('/posts', requestData);
@@ -82,8 +103,16 @@ export const postAPI = {
 
 // Comment API
 export const commentAPI = {
-  create: (postId, userId, content) =>
-    api.post('/comments', { content }, { params: { postId, userId } }),
+  create: (postId, userId, content) => {
+    // 백엔드가 body에서 {postId, userId, content}를 받으므로 모두 body에 전송
+    const requestData = {
+      postId: parseInt(postId),
+      userId: parseInt(userId),
+      content: String(content)
+    };
+    console.log('댓글 생성 요청 데이터:', requestData);
+    return api.post('/comments', requestData);
+  },
   
   getByPost: (postId) =>
     api.get(`/comments/post/${postId}`),
