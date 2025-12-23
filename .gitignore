@@ -5,6 +5,7 @@ backend-nestjs/node_modules/
 backend-nestjs/dist/
 backend-nestjs/.env
 backend-nestjs/.env.local
+backend-nestjs/.env.production
 backend-nestjs/.DS_Store
 
 # Logs
