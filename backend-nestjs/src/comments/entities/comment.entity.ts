@@ -4,8 +4,6 @@ import {
   Column, 
   ManyToOne, 
   JoinColumn, 
-  CreateDateColumn, 
-  UpdateDateColumn, 
   Index,
   BeforeInsert,
   BeforeUpdate
@@ -38,10 +36,10 @@ export class Comment {
   @Column({ type: 'text', nullable: false })
   content: string;
 
-  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   @BeforeInsert()

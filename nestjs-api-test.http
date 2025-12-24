@@ -1,11 +1,11 @@
 ### Test NestJS Server Connection
-GET http://localhost:3001/
+GET http://localhost:8081/
 
 ### Test Users API
-GET http://localhost:3001/users
+GET http://localhost:8081/api/users
 
-### Create User
-POST http://localhost:3001/users
+### Create User (Signup)
+POST http://localhost:8081/api/users/signup
 Content-Type: application/json
 
 {
@@ -16,10 +16,10 @@ Content-Type: application/json
 }
 
 ### Get User by ID
-GET http://localhost:3001/users/1
+GET http://localhost:8081/api/users/1
 
 ### Update User
-PUT http://localhost:3001/users/1
+PUT http://localhost:8081/api/users/1
 Content-Type: application/json
 
 {
@@ -30,13 +30,13 @@ Content-Type: application/json
 }
 
 ### Delete User
-DELETE http://localhost:3001/users/1
+DELETE http://localhost:8081/api/users/1
 
 ### Test Posts API
-GET http://localhost:3001/posts
+GET http://localhost:8081/api/posts
 
 ### Create Post
-POST http://localhost:3001/posts
+POST http://localhost:8081/api/posts
 Content-Type: application/json
 
 {
@@ -46,13 +46,13 @@ Content-Type: application/json
 }
 
 ### Get Posts with Pagination
-GET http://localhost:3001/posts?page=1&limit=10
+GET http://localhost:8081/api/posts/pagination?page=1&limit=10
 
 ### Test Comments API
-GET http://localhost:3001/comments
+GET http://localhost:8081/api/comments
 
 ### Create Comment
-POST http://localhost:3001/comments
+POST http://localhost:8081/api/comments
 Content-Type: application/json
 
 {
@@ -62,10 +62,10 @@ Content-Type: application/json
 }
 
 ### Test Messages API
-GET http://localhost:3001/messages
+GET http://localhost:8081/api/messages
 
 ### Send Message
-POST http://localhost:3001/messages
+POST http://localhost:8081/api/messages
 Content-Type: application/json
 
 {
@@ -75,4 +75,4 @@ Content-Type: application/json
 }
 
 ### Get Messages for User
-GET http://localhost:3001/messages/1
+GET http://localhost:8081/api/messages/received/1

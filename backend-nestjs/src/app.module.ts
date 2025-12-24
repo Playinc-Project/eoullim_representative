@@ -17,21 +17,35 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
       envFilePath: '.env',
     }),
 
-// TypeORM 설정 (MySQL 환경변수 기반)   
+// TypeORM 설정 (SQLite for testing, MySQL for production)   
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: config.get('DATABASE_TYPE') || 'mysql',
-        host: config.get('DATABASE_HOST'),
-        port: parseInt(config.get('DATABASE_PORT')) || 3306,
-        username: config.get('DATABASE_USER'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: config.get('DATABASE_SYNCHRONIZE') === 'true',
-        logging: config.get('NODE_ENV') === 'development',
-        timezone: 'Z',
-      }),
+      useFactory: (config: ConfigService) => {
+        const dbType = config.get<string>('DATABASE_TYPE') || 'mysql';
+        
+        if (dbType === 'sqlite') {
+          return {
+            type: 'sqlite' as const,
+            database: config.get<string>('DATABASE_NAME') || 'eoullim_test.db',
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
+            logging: config.get<string>('NODE_ENV') === 'development',
+          };
+        } else {
+          return {
+            type: 'mysql' as const,
+            host: config.get<string>('DATABASE_HOST'),
+            port: parseInt(config.get<string>('DATABASE_PORT') || '3306'),
+            username: config.get<string>('DATABASE_USER'),
+            password: config.get<string>('DATABASE_PASSWORD'),
+            database: config.get<string>('DATABASE_NAME'),
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
+            logging: config.get<string>('NODE_ENV') === 'development',
+            timezone: 'Z',
+          };
+        }
+      },
     }),
 
     // 캐싱 설정 (Spring ConcurrentMapCache와 동일)
