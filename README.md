@@ -2,6 +2,10 @@
 
 React + Spring Boot 기반의 소셜 네트워크 서비스
 
+## 배포 링크
+
+http://54.180.226.197/
+
 ## 프로젝트 구조
 
 - **Frontend**: React + Firebase (CloudFront로 배포)
