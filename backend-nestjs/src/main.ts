@@ -35,6 +35,8 @@ async function bootstrap() {
       'http://localhost:3001',
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
+      'http://54.180.226.197',
+      'http://54.180.226.197:80',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
@@ -44,7 +46,7 @@ async function bootstrap() {
   process.env.TZ = 'Asia/Seoul';
 
   const port = process.env.PORT || 8081;
-  await app.listen(port, '127.0.0.1');
-  console.log(`🚀 Server running on http://localhost:${port}/api at ${new Date().toLocaleTimeString()}`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Server running on http://0.0.0.0:${port}/api at ${new Date().toLocaleTimeString()}`);
 }
 bootstrap();

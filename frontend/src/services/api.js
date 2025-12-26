@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // API 기본 URL (환경에 따라 수정)
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'http://YOUR_EC2_PUBLIC_IP:8081/api'
+  ? 'http://54.180.226.197/api'
   : process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
 
 const api = axios.create({
