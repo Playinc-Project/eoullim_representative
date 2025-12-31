@@ -1,0 +1,4 @@
+﻿/api/ -> ERR: 원격 서버에서 (404) 찾을 수 없음 오류를 반환했습니다.
+/api/health -> 200
+/api/health/ready -> 200
+/api/health/live -> 200

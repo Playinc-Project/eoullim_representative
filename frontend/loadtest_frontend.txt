@@ -1,0 +1,19 @@
+
+Target URL:          http://localhost:3000/
+Max requests:        100
+Concurrent clients:  80
+Running on cores:    8
+Agent:               none
+
+Completed requests:  100
+Total errors:        0
+Total time:          0.968 s
+Mean latency:        288.3 ms
+Effective rps:       103
+
+Percentage of requests served within a certain time
+  50%      297 ms
+  90%      411 ms
+  95%      478 ms
+  99%      536 ms
+ 100%      536 ms (longest request)

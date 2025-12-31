@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentDTO } from './dto/comment.dto';
+import { UpdateCommentDTO } from './dto/update-comment.dto';
 
 @Controller('comments')
 export class CommentsController {
@@ -44,13 +45,13 @@ export class CommentsController {
   async updateComment(
     @Param('id') id: string,
     @Query('userId') userId: string,
-    @Body() commentDTO: CommentDTO,
+    @Body() updateCommentDTO: UpdateCommentDTO,
   ) {
     try {
       return await this.commentsService.updateComment(
         +id,
         +userId,
-        commentDTO.content,
+        updateCommentDTO.content,
       );
     } catch (error) {
       throw new HttpException({ error: '댓글 수정에 실패했습니다' }, HttpStatus.BAD_REQUEST);

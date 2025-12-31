@@ -30,7 +30,7 @@ import { HealthModule } from './health/health.module';
             database: config.get<string>('DATABASE_NAME') || 'eoullim_test.db',
             entities: [__dirname + '/**/*.entity{.ts,.js}'],
             synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
-            logging: config.get<string>('NODE_ENV') === 'development',
+            logging: 'all',
           };
         } else {
           return {
@@ -42,7 +42,7 @@ import { HealthModule } from './health/health.module';
             database: config.get<string>('DATABASE_NAME'),
             entities: [__dirname + '/**/*.entity{.ts,.js}'],
             synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
-            logging: config.get<string>('NODE_ENV') === 'development',
+            logging: 'all',
             timezone: 'Z',
           };
         }

@@ -1,0 +1,30 @@
+Requests: 0 (0%), requests per second: 0, mean latency: 0 ms
+Requests: 0 (0%), requests per second: 0, mean latency: 0 ms
+Requests: 0 (0%), requests per second: 0, mean latency: 0 ms
+Requests: 81 (65%), requests per second: 16, mean latency: 1056.2 ms
+Requests: 106 (85%), requests per second: 21, mean latency: 834.9 ms
+Requests: 73 (58%), requests per second: 15, mean latency: 1178.6 ms
+Requests: 71 (57%), requests per second: 14, mean latency: 1261.1 ms
+Requests: 42 (34%), requests per second: 12, mean latency: 1242.4 ms
+Requests: 51 (41%), requests per second: 14, mean latency: 1111.1 ms
+Requests: 52 (42%), requests per second: 14, mean latency: 1303.8 ms
+Requests: 52 (42%), requests per second: 10, mean latency: 1470.1 ms
+
+Target URL:          http://localhost:3001/
+Max requests:        1000
+Concurrent clients:  160
+Running on cores:    8
+Agent:               none
+
+Completed requests:  1000
+Total errors:        0
+Total time:          10.958 s
+Mean latency:        1118.9 ms
+Effective rps:       91
+
+Percentage of requests served within a certain time
+  50%      1246 ms
+  90%      1560 ms
+  95%      1638 ms
+  99%      2008 ms
+ 100%      2685 ms (longest request)

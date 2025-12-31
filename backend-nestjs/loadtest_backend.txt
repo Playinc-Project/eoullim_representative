@@ -1,0 +1,21 @@
+
+Target URL:          http://localhost:8081/api/
+Max requests:        100
+Concurrent clients:  80
+Running on cores:    8
+Agent:               none
+
+Completed requests:  100
+Total errors:        100
+Total time:          1.073 s
+Mean latency:        251 ms
+Effective rps:       93
+
+Percentage of requests served within a certain time
+  50%      241 ms
+  90%      357 ms
+  95%      407 ms
+  99%      487 ms
+ 100%      487 ms (longest request)
+
+   -1:   100 errors

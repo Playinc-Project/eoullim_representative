@@ -12,6 +12,21 @@ backend-nestjs/.DS_Store
 backend-nestjs/*.log
 backend-nestjs/npm-debug.log*
 
+# DB/SQLite
+backend-nestjs/*.db
+backend-nestjs/*.sqlite
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# 기타 로그
+backend-nestjs/backend_query.log
+
+# VSCode
+.vscode/
+
 # dependencies
 /node_modules
 /.pnp

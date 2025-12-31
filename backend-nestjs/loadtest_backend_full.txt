@@ -1,0 +1,27 @@
+Requests: 80 (64%), requests per second: 16, mean latency: 1016.5 ms
+Requests: 80 (64%), requests per second: 16, mean latency: 1093.1 ms
+Requests: 80 (64%), requests per second: 16, mean latency: 1119.8 ms
+Requests: 76 (61%), requests per second: 15, mean latency: 1167.4 ms
+Requests: 68 (54%), requests per second: 13, mean latency: 1104 ms
+Requests: 60 (48%), requests per second: 12, mean latency: 1065.3 ms
+Requests: 60 (48%), requests per second: 12, mean latency: 1167.6 ms
+Requests: 60 (48%), requests per second: 12, mean latency: 1073.9 ms
+
+Target URL:          http://localhost:8081/api/health
+Max requests:        1000
+Concurrent clients:  160
+Running on cores:    8
+Agent:               none
+
+Completed requests:  1000
+Total errors:        0
+Total time:          8.03 s
+Mean latency:        1167.5 ms
+Effective rps:       125
+
+Percentage of requests served within a certain time
+  50%      1027 ms
+  90%      1800 ms
+  95%      2096 ms
+  99%      2171 ms
+ 100%      2178 ms (longest request)

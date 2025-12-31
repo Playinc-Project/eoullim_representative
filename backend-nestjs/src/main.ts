@@ -13,7 +13,7 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false,
       exceptionFactory: (errors) => {
         const result = errors.map((error) => ({
           property: error.property,
