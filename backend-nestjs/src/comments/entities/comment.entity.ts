@@ -25,11 +25,11 @@ export class Comment {
   @Column({ name: 'user_id', type: 'integer', nullable: false })
   userId: number;
 
-  @ManyToOne(() => Post, post => post.comments, { lazy: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, post => post.comments, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
   post: Post;
 
-  @ManyToOne(() => User, user => user.comments, { lazy: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.comments, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 

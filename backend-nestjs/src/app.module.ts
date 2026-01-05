@@ -31,6 +31,7 @@ import { HealthModule } from './health/health.module';
             entities: [__dirname + '/**/*.entity{.ts,.js}'],
             synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
             logging: 'all',
+            metadataTableName: 'typeorm_metadata',
           };
         } else {
           return {
@@ -44,6 +45,7 @@ import { HealthModule } from './health/health.module';
             synchronize: config.get<string>('DATABASE_SYNCHRONIZE') === 'true',
             logging: 'all',
             timezone: 'Z',
+            metadataTableName: 'typeorm_metadata',
           };
         }
       },

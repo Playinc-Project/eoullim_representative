@@ -223,14 +223,15 @@ export class PostsController {
   @Post(':postId/comments')
   async createComment(
     @Param('postId') postId: string,
-    @Body() commentDTO: CommentDTO,
+    @Body() body: { userId: number; content: string },
   ) {
     try {
+      console.log('📝 댓글 작성 요청:', { postId, body });
       const postIdNum = parseInt(postId, 10);
       const comment = await this.commentsService.createComment(
         postIdNum,
-        commentDTO.userId,
-        commentDTO.content,
+        body.userId,
+        body.content,
       );
       return {
         success: true,

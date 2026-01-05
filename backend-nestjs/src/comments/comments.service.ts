@@ -17,18 +17,22 @@ export class CommentsService {
     private userRepository: Repository<User>,
   ) {}
 
-  // 댓글 생성
+  // 댓글 생성 (Promise.all 병렬 실행 + Eager Loading)
   async createComment(
     postId: number,
     userId: number,
     content: string,
   ): Promise<CommentDTO> {
-    const post = await this.postRepository.findOneBy({ id: postId });
+    // Post와 User를 병렬로 조회
+    const [post, user] = await Promise.all([
+      this.postRepository.findOneBy({ id: postId }),
+      this.userRepository.findOneBy({ id: userId }),
+    ]);
+
     if (!post) {
       throw new Error('게시글을 찾을 수 없습니다.');
     }
 
-    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('사용자를 찾을 수 없습니다.');
     }
@@ -40,10 +44,19 @@ export class CommentsService {
     });
 
     const saved = await this.commentRepository.save(comment);
-    return this.convertToDTO(saved);
+    // Eager Loading 적용: save 후 다시 조회하여 Post/User 자동 로드
+    const commentWithRelations = await this.commentRepository.findOneBy({ 
+      id: saved.id 
+    });
+    
+    if (!commentWithRelations) {
+      throw new Error('댓글 저장 후 조회 실패');
+    }
+    
+    return this.convertToDTO(commentWithRelations);
   }
 
-  // 게시글의 댓글 조회
+  // 게시글의 댓글 조회 (Eager Loading으로 Post/User 자동 포함)
   async getCommentsByPost(postId: number): Promise<CommentDTO[]> {
     const comments = await this.commentRepository.find({
       where: { postId },
@@ -53,7 +66,7 @@ export class CommentsService {
     return comments.map((c) => this.convertToDTO(c));
   }
 
-  // 댓글 수정
+  // 댓글 수정 (Eager Loading 적용)
   async updateComment(
     id: number,
     userId: number,
@@ -70,7 +83,16 @@ export class CommentsService {
 
     comment.content = content;
     const updated = await this.commentRepository.save(comment);
-    return this.convertToDTO(updated);
+    // Eager Loading 적용: save 후 다시 조회하여 Post/User 자동 로드
+    const updatedWithRelations = await this.commentRepository.findOneBy({ 
+      id: updated.id 
+    });
+    
+    if (!updatedWithRelations) {
+      throw new Error('댓글 수정 후 조회 실패');
+    }
+    
+    return this.convertToDTO(updatedWithRelations);
   }
 
   // 댓글 삭제

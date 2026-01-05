@@ -37,10 +37,19 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+.env.production
+
+# 민감 정보 (절대 커밋 금지)
+*.pem
+*.key
+*.jks
+*.p12
+.env*
+!.env.example
 
 # temp directory
 .temp
