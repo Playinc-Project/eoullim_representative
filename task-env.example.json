@@ -1,0 +1,7 @@
+﻿{
+  " NODE_ENV\: \development\,
+ \PORT\: \3000\,
+ \DATABASE_URL\: \sqlite:./eoullim_test.db\,
+ \JWT_SECRET\: \<REPLACE_WITH_SECRET>\,
+ \API_KEY\: \<REPLACE_WITH_API_KEY>\
+}
